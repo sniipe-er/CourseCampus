@@ -24,7 +24,14 @@ from rest_framework_simplejwt.views import (
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    path('api/auth/', include('users.urls')),
-    path('api/auth/login/', TokenObtainPairView.as_view()),
-    path('api/auth/refresh/', TokenRefreshView.as_view()),
+    path('api/auth/', include('djoser.urls')),
+    path('api/auth/', include('djoser.urls.jwt')),
+
+    path('api/auth/jwt/create/', TokenObtainPairView.as_view(), name='jwt-create'),
+    path('api/auth/jwt/refresh/', TokenRefreshView.as_view(), name='jwt-refresh'),
+
+    path('api/courses/', include('courses.urls')),
+    path('api/enrollments/', include('enrollments.urls')),
+    path('api/assignments/', include('assignments.urls')),
+    path('api/certificates/', include('certificates.urls')),
 ]

@@ -1,33 +1,48 @@
 from django.db import models
-from django.db import models
-from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
 
-# Create your models here.
-
 class UserManager(BaseUserManager):
-    def create_user(self, email, password=None, role='student'):
+    def create_user(self, email, password=None, role='student', **extra_fields):
         if not email:
-            raise ValueError("Users must have an email address")
+            raise ValueError("Email is required")
+
+        if role not in ['student', 'instructor']:
+            raise ValueError("Invalid role for public registration")
 
         user = self.model(
             email=self.normalize_email(email),
-            role=role
+            role=role,
+            **extra_fields
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password):
-        user = self.create_user(email, password, role='admin')
-        user.is_staff = True
-        user.is_superuser = True
+    def create_admin(self, email, password):
+        user = self.model(
+            email=self.normalize_email(email),
+            role='admin',
+            is_staff=True,
+            is_superuser=True
+        )
+        user.set_password(password)
         user.save(using=self._db)
         return user
 
+    def create_owner(self, email, password):
+        user = self.model(
+            email=self.normalize_email(email),
+            role='owner',
+            is_staff=True,
+            is_superuser=True
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
 class User(AbstractBaseUser, PermissionsMixin):
     ROLE_CHOICES = (
+        ('owner', 'Owner'),
         ('admin', 'Admin'),
         ('instructor', 'Instructor'),
         ('student', 'Student'),
@@ -45,7 +60,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
 
     def __str__(self):
-        return self.email
+        return f"{self.email} ({self.role})"
