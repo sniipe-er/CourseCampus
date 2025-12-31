@@ -24,7 +24,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             name=validated_data['name']
         )
 
-
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
