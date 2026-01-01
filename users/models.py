@@ -3,45 +3,57 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseU
 
 
 class UserManager(BaseUserManager):
+
     def create_user(self, email, password=None, role='student', **extra_fields):
         if not email:
             raise ValueError("Email is required")
 
-        email = self.normalize_email(email)
+        if role not in ['student', 'instructor']:
+            raise ValueError("Role must be student or instructor")
 
         user = self.model(
-            email=email,
+            email=self.normalize_email(email),
             role=role,
             **extra_fields
         )
         user.set_password(password)
+        user.is_active = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, email, password=None, **extra_fields):
-
-        extra_fields.setdefault('is_staff', True)
-        extra_fields.setdefault('is_superuser', True)
-
-        return self.create_user(
-            email=email,
-            password=password,
-            role='owner',
+    def create_superuser(self, email, password, **extra_fields):
+        """
+        Used ONLY by createsuperuser
+        """
+        user = self.model(
+            email=self.normalize_email(email),
+            role=None,              # ✅ NO ROLE
+            is_staff=True,
+            is_superuser=True,
             **extra_fields
         )
+        user.set_password(password)
+        user.is_active = True
+        user.save(using=self._db)
+        return user
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+
     ROLE_CHOICES = (
-        ('owner', 'Owner'),
-        ('admin', 'Admin'),
-        ('instructor', 'Instructor'),
         ('student', 'Student'),
+        ('instructor', 'Instructor'),
     )
 
     email = models.EmailField(unique=True)
     name = models.CharField(max_length=100)
-    role = models.CharField(max_length=20, choices=ROLE_CHOICES)
+
+    role = models.CharField(
+        max_length=20,
+        choices=ROLE_CHOICES,
+        null=True,
+        blank=True
+    )
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
@@ -52,7 +64,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['name']
+    REQUIRED_FIELDS = []
 
     def __str__(self):
-        return f"{self.email} ({self.role})"
+        return self.email
