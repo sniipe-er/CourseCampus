@@ -22,12 +22,10 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email, password, **extra_fields):
-        """
-        Used ONLY by createsuperuser
-        """
+
         user = self.model(
             email=self.normalize_email(email),
-            role=None,              # ✅ NO ROLE
+            role=None,
             is_staff=True,
             is_superuser=True,
             **extra_fields
