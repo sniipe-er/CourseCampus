@@ -2,102 +2,155 @@
 
 A fully functional **back-end Learning Management System (LMS)** built using **Django**, **Django REST Framework**, and **JWT Authentication**.
 
-This project is an MVP that allows **instructors** to create courses and lessons, **students** to enroll and submit assignments, and **admins** to manage the platform. The system is API-only and focuses on backend logic, security, and database design.
+CourseCampus is an API-only backend that allows **instructors** to create and manage courses and lessons, **students** to enroll and access content, and **admins** to manage the platform through Django Admin.  
+The project focuses on backend architecture, security, role-based permissions, and clean RESTful design.
 
 ---
 
 🚀 **Features**
 
 👤 **User Management**
-
-* JWT authentication (login, refresh)
-* User roles: Admin, Instructor, Student
-* Secure profile management
-* Role-based access control
+- Custom User model
+- JWT authentication (login & refresh)
+- User roles: **Instructor** and **Student**
+- Role-based access control
+- Secure profile access
 
 📚 **Courses & Lessons**
+- Instructors create, update, and delete their own courses
+- Lessons added to courses by instructors
+- Public course listing
+- Students can view lessons only if enrolled
 
-* Instructors create and manage courses
-* Lessons added to courses
-* Course categorization support
+🎓 **Enrollments**
+- Students enroll in courses
+- Prevents duplicate enrollments
+- Enrollment-based access to lessons
 
-🎓 **Enrollment**
-
-* Students enroll in courses
-* Prevents duplicate enrollment
-* Tracks course completion status
-
-📝 **Assignments & Submissions**
-
-* Instructors create assignments per lesson
-* Students submit assignments
-* Grading and submission tracking
-
-🏅 **Certificates**
-
-* Automatic course completion detection
-* Certificate generation for completed courses
+🛡 **Permissions & Security**
+- Instructor-only course & lesson management
+- Student-only enrollment
+- JWT-protected endpoints
+- Django Admin for superusers
 
 ---
 
 📂 **Project Structure**
 
-```
-coursecampus/
+CourseCampus/
 │
-├── users/          # Authentication & user roles
-├── courses/        # Courses & lessons
-├── enrollments/    # Enrollment logic
-├── assignments/    # Assignments & submissions
-├── certificates/   # Course certificates
-├── core/           # Permissions & utilities
-├── CourseCampus/   # Django settings
+├── users/ # Custom user model & authentication
+├── courses/ # Courses & lessons logic
+├── enrollments/ # Enrollment system
+├── assignments/ # Assignments (future expansion)
+├── certificates/ # Certificates (future expansion)
+├── CourseCampus/ # Project settings & URLs
+├── db.sqlite3 # SQLite database (development)
+├── manage.py
 └── README.md
-```
 
 ---
 
 🧩 **Tech Stack**
 
-| Component | Technology                         |
-| --------- | ---------------------------------- |
-| Backend   | Django 5                           |
-| API       | Django REST Framework              |
-| Auth      | SimpleJWT                          |
-| Database  | SQLite (dev), PostgreSQL supported |
-| Tools     | Postman, Git                       |
+| Component | Technology |
+|---------|-----------|
+| Backend | Django 5 |
+| API | Django REST Framework |
+| Authentication | SimpleJWT + Djoser |
+| Database | SQLite (development) |
+| Tools | Postman, Git |
 
 ---
 
 🏗 **Setup Instructions**
 
-1️⃣ Clone the repository
+### 1️⃣ Clone the repository
 
 ```bash
-git clone https://github.com/your-username/coursecampus.git
-cd coursecampus
-```
-
+git clone https://github.com/sniipe-er/CourseCampus.git
+cd CourseCampus
 2️⃣ Create virtual environment & install dependencies
+python -m venv venv
+source venv/bin/activate   # Linux / macOS
+venv\Scripts\activate      # Windows
 
-```bash
-pip install -r requirements.txt
-```
+pip install django djangorestframework djoser djangorestframework-simplejwt
 
 3️⃣ Run migrations
-
-```bash
+python manage.py makemigrations
 python manage.py migrate
-```
 
-4️⃣ Start development server
+4️⃣ Create superuser (Admin)
+python manage.py createsuperuser
 
-```bash
+
+Admin panel:
+
+http://127.0.0.1:8000/admin/
+
+5️⃣ Start development server
 python manage.py runserver
-```
 
----
 
-🎓 **Academic Context**
+API base URL:
 
-CourseCampus was developed as a **Capstone Project** to demonstrate skills in backend development, REST API design, authentication, authorization, and database modeling.
+http://127.0.0.1:8000/api/
+
+
+🔑 Authentication Endpoints
+
+Method	Endpoint	Description
+POST	/api/auth/users/	Register
+POST	/api/auth/jwt/create/	Login
+POST	/api/auth/jwt/refresh/	Refresh token
+GET	/api/auth/users/me/	Current user
+
+📚 Courses Endpoints
+
+Method	Endpoint	Access
+GET	/api/courses/	Public
+GET	/api/courses/me/	Instructor
+POST	/api/courses/me/	Instructor
+GET / PUT / DELETE	/api/courses/<id>/	Instructor (owner)
+
+📖 Lessons Endpoints
+
+Method	Endpoint	Access
+GET	/api/courses/<course_id>/lessons/	Enrolled students / Instructor
+POST	/api/courses/<course_id>/lessons/	Instructor only
+
+📝 Enrollments Endpoints
+
+Method	Endpoint	Description
+POST	/api/enrollments/enroll/<course_id>/	Enroll in course
+GET	/api/enrollments/my/	My enrollments
+
+🧪 API Testing
+
+Login and get access token
+
+Add header to requests:
+
+Authorization: Bearer <ACCESS_TOKEN>
+
+
+Test instructor & student permissions using Postman
+
+🎓 Academic Context
+
+CourseCampus was developed as a backend-focused academic project to demonstrate:
+
+REST API design
+
+Authentication & authorization
+
+Role-based permissions
+
+Django best practices
+
+Clean project structure
+
+📍 Repository
+
+https://github.com/sniipe-er/CourseCampus
