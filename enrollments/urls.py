@@ -2,6 +2,7 @@ from django.urls import path
 from .views import EnrollView, MyEnrollmentsView
 
 urlpatterns = [
-    path('enroll/<int:course_id>/', EnrollView.as_view(), name='enroll'),
-    path('me/', MyEnrollmentsView.as_view(), name='my-enrollments'),
+    path('', MyEnrollmentsView.as_view()),
+    path('enroll/<int:course_id>/', EnrollView.as_view()),
+    path('my/', MyEnrollmentsView.as_view()),
 ]
