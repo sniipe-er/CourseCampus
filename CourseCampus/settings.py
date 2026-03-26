@@ -184,10 +184,13 @@ ADMIN_INDEX_TITLE = "Platform Management"
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-STATICFILES_DIRS = [
-    BASE_DIR / "coursecampus-frontend" / "dist",
-]
+import os
 
+TEMPLATES[0]['DIRS'] = [os.path.join(BASE_DIR, 'dist')]
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'dist/assets')
+]
 
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = not DEBUG

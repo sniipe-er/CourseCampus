@@ -34,6 +34,6 @@ urlpatterns = [
     path('api/courses/', include('courses.urls')),
     path('api/enrollments/', include('enrollments.urls')),
     path('api/assignments/', include('assignments.urls')),
-path('api/certificates/', include('certificates.urls')),
-    re_path(r'^.*$', TemplateView.as_view(template_name='index.html'), name='frontend'),
+    path('api/certificates/', include('certificates.urls')),
+    re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
 ]
