@@ -1,0 +1,27 @@
+:root {
+  --bg-start: #e0e0e0;
+  --bg-end: #d4d4d4;
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --text-primary: #000000;
+  --text-secondary: #1a237e;
+  --accent: #ff9800;
+  --accent-2: #81d4fa;
+  --primary: #1a237e;
+  --success: #16a34a;
+  --danger: #dc2626;
+}
+
+.dark {
+  --bg-start: #121212;
+  --bg-end: #1c1c1c;
+  --surface: rgba(24, 24, 24, 0.95);
+  --surface-glass: rgba(28, 28, 28, 0.78);
+  --text-primary: #e0e0e0;
+  --text-secondary: #81d4fa;
+  --accent: #ff9800;
+  --accent-2: #81d4fa;
+  --primary: #1a237e;
+  --success: #22c55e;
+  --danger: #ef4444;
+}
