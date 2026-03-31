@@ -6,7 +6,7 @@ export default function Register() {
   const [form, setForm] = useState({
     email: "",
     password: "",
-    username: "",
+    name: "",
     role: "student",
   });
   const navigate = useNavigate();
@@ -21,7 +21,13 @@ export default function Register() {
       navigate("/login");
     } catch (error) {
       console.error(error);
-      alert("Register failed. Please verify the required fields.");
+      const errorMessage =
+        error.response?.data?.name?.[0] ||
+        error.response?.data?.email?.[0] ||
+        error.response?.data?.role?.[0] ||
+        error.response?.data?.password?.[0] ||
+        "Register failed. Please verify the required fields.";
+      alert(errorMessage);
     }
   };
 
@@ -51,11 +57,11 @@ export default function Register() {
 
         <div className="auth-form">
           <label className="field-group">
-            <span className="field-label">Username</span>
+            <span className="field-label">Name</span>
             <input
-              value={form.username}
-              onChange={handleChange("username")}
-              placeholder="Choose a username"
+              value={form.name}
+              onChange={handleChange("name")}
+              placeholder="Enter your full name"
               className="field-input"
             />
           </label>
