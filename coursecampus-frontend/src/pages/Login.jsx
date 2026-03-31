@@ -18,8 +18,7 @@ export default function Login() {
       const userResponse = await api.get("/auth/users/me/");
       localStorage.setItem("role", userResponse.data.role);
 
-      navigate("/");
-      window.location.reload();
+      navigate("/dashboard");
     } catch (error) {
       console.error(error);
       alert("Login failed. Please check your credentials.");

@@ -473,9 +473,75 @@
   gap: 12px;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.dashboard-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.dashboard-link-button {
+  white-space: nowrap;
+}
+
+.dashboard-course-list {
+  display: grid;
+  gap: 14px;
+}
+
+.dashboard-course-card {
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(129, 212, 250, 0.12);
+  border: 1px solid rgba(26, 35, 126, 0.12);
+}
+
+.dashboard-course-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.dashboard-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 152, 0, 0.14);
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.dashboard-meta {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.dashboard-action {
+  margin-top: 16px;
+}
+
+.dashboard-empty {
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.24);
+  color: var(--text-secondary);
+}
+
 @media (max-width: 960px) {
   .hero-grid,
   .auth-layout,
+  .dashboard-grid,
   .feature-grid,
   .info-grid {
     grid-template-columns: 1fr;

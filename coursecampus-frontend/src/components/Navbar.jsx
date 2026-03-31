@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import logo from "../assets/logo.png";
 
 const THEME_KEY = "coursecampus-theme";
 
@@ -246,7 +247,7 @@ export default function Navbar() {
       <div className="topbar-inner">
         <div className="topbar-left">
           <Link to="/" className="brand-link" aria-label="Go to CourseCampus homepage">
-            <img src="/logo.png" alt="CourseCampus logo" className="brand-mark" />
+            <img src={logo} alt="CourseCampus logo" className="brand-mark" />
             <span className="brand-text">
               <span className="brand-title">CourseCampus</span>
               <span className="brand-subtitle">Learning Hub</span>
