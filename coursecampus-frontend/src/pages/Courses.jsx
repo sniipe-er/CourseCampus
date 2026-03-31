@@ -1,39 +1,60 @@
-const courseCards = [
-  {
-    title: "Discover courses",
-    copy: "Browse the available learning spaces and choose what fits you best.",
-  },
-  {
-    title: "Keep learning",
-    copy: "Return to your courses easily and continue from where you stopped.",
-  },
-  {
-    title: "Simple experience",
-    copy: "Everything stays centered on courses, access, and user comfort.",
-  },
-];
+import { useEffect, useState } from "react";
+import api from "../services/api";
 
 export default function Courses() {
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const loadCourses = async () => {
+      try {
+        const response = await api.get("/courses/");
+        setCourses(response.data);
+      } catch (requestError) {
+        console.error(requestError);
+        setError("We could not load the available courses right now.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadCourses();
+  }, []);
+
   return (
     <section className="stack">
       <div className="surface-card">
         <div className="eyebrow-text">Courses</div>
-        <h1 className="page-title">Explore courses in a simple, focused space.</h1>
+        <h1 className="page-title">Available courses</h1>
         <p className="page-copy">
-          This area is designed to help users browse, choose, and return to courses without
-          unnecessary distractions.
+          Browse what is currently available and choose the course that fits you best.
         </p>
       </div>
 
       <div className="surface-card">
-        <div className="feature-grid">
-          {courseCards.map((card) => (
-            <article key={card.title} className="feature-card">
-              <h2 className="feature-title">{card.title}</h2>
-              <p className="feature-copy">{card.copy}</p>
-            </article>
-          ))}
-        </div>
+        {loading ? (
+          <div className="dashboard-empty">Loading courses...</div>
+        ) : error ? (
+          <div className="dashboard-empty">{error}</div>
+        ) : courses.length > 0 ? (
+          <div className="dashboard-course-list">
+            {courses.map((course) => (
+              <article key={course.id} className="dashboard-course-card">
+                <div className="dashboard-course-top">
+                  <h2 className="feature-title">{course.title}</h2>
+                  {course.category && <span className="dashboard-badge">{course.category}</span>}
+                </div>
+                <p className="feature-copy">{course.description}</p>
+                {course.instructor?.name && (
+                  <div className="dashboard-meta">Instructor: {course.instructor.name}</div>
+                )}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="dashboard-empty">No courses are available yet.</div>
+        )}
       </div>
     </section>
   );

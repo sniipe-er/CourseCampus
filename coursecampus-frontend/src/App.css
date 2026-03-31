@@ -538,10 +538,24 @@
   color: var(--text-secondary);
 }
 
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.profile-card {
+  padding: 20px;
+  border-radius: 22px;
+  background: rgba(129, 212, 250, 0.12);
+  border: 1px solid rgba(26, 35, 126, 0.12);
+}
+
 @media (max-width: 960px) {
   .hero-grid,
   .auth-layout,
   .dashboard-grid,
+  .profile-grid,
   .feature-grid,
   .info-grid {
     grid-template-columns: 1fr;
