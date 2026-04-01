@@ -17,9 +17,12 @@ export default function Courses() {
   const [courses, setCourses] = useState([]);
   const [enrolledIds, setEnrolledIds] = useState([]);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
-  const [form, setForm] = useState(emptyCourseForm);
+  const [createForm, setCreateForm] = useState(emptyCourseForm);
+  const [editForm, setEditForm] = useState(emptyCourseForm);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [updating, setUpdating] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [enrollingId, setEnrollingId] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -67,8 +70,25 @@ export default function Courses() {
 
   const selectedCourse = courses.find((course) => course.id === selectedCourseId) || null;
 
-  const handleChange = (field) => (event) => {
-    setForm((current) => ({ ...current, [field]: event.target.value }));
+  useEffect(() => {
+    if (selectedCourse && isInstructor) {
+      setEditForm({
+        title: selectedCourse.title || "",
+        description: selectedCourse.description || "",
+        category: selectedCourse.category || "",
+      });
+      return;
+    }
+
+    setEditForm(emptyCourseForm);
+  }, [isInstructor, selectedCourse]);
+
+  const handleCreateChange = (field) => (event) => {
+    setCreateForm((current) => ({ ...current, [field]: event.target.value }));
+  };
+
+  const handleEditChange = (field) => (event) => {
+    setEditForm((current) => ({ ...current, [field]: event.target.value }));
   };
 
   const handleCreateCourse = async (event) => {
@@ -79,10 +99,10 @@ export default function Courses() {
       setError("");
       setSuccess("");
 
-      const response = await api.post("/courses/me/", form);
+      const response = await api.post("/courses/me/", createForm);
       setCourses((current) => [response.data, ...current]);
       setSelectedCourseId(response.data.id);
-      setForm(emptyCourseForm);
+      setCreateForm(emptyCourseForm);
       setSuccess("Your course was created successfully.");
     } catch (requestError) {
       console.error(requestError);
@@ -95,6 +115,70 @@ export default function Courses() {
       );
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleUpdateCourse = async (event) => {
+    event.preventDefault();
+
+    if (!selectedCourse) {
+      return;
+    }
+
+    try {
+      setUpdating(true);
+      setError("");
+      setSuccess("");
+
+      const response = await api.put(`/courses/${selectedCourse.id}/`, editForm);
+      setCourses((current) =>
+        current.map((course) => (course.id === selectedCourse.id ? response.data : course)),
+      );
+      setSuccess("Your course was updated successfully.");
+    } catch (requestError) {
+      console.error(requestError);
+      setError(
+        requestError.response?.data?.title?.[0] ||
+          requestError.response?.data?.description?.[0] ||
+          requestError.response?.data?.category?.[0] ||
+          requestError.response?.data?.detail ||
+          "We could not update the course right now.",
+      );
+    } finally {
+      setUpdating(false);
+    }
+  };
+
+  const handleDeleteCourse = async () => {
+    if (!selectedCourse) {
+      return;
+    }
+
+    const confirmed = window.confirm(
+      `Delete "${selectedCourse.title}"? This action cannot be undone.`,
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      setError("");
+      setSuccess("");
+
+      await api.delete(`/courses/${selectedCourse.id}/`);
+      const remainingCourses = courses.filter((course) => course.id !== selectedCourse.id);
+      setCourses(remainingCourses);
+      setSelectedCourseId(remainingCourses[0]?.id ?? null);
+      setSuccess("Your course was deleted successfully.");
+    } catch (requestError) {
+      console.error(requestError);
+      setError(
+        requestError.response?.data?.detail || "We could not delete the course right now.",
+      );
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -140,8 +224,8 @@ export default function Courses() {
               <label className="field-group">
                 <span className="field-label">Title</span>
                 <input
-                  value={form.title}
-                  onChange={handleChange("title")}
+                  value={createForm.title}
+                  onChange={handleCreateChange("title")}
                   placeholder="Course title"
                   className="field-input"
                 />
@@ -150,8 +234,8 @@ export default function Courses() {
               <label className="field-group">
                 <span className="field-label">Category</span>
                 <input
-                  value={form.category}
-                  onChange={handleChange("category")}
+                  value={createForm.category}
+                  onChange={handleCreateChange("category")}
                   placeholder="Design, programming, marketing..."
                   className="field-input"
                 />
@@ -161,8 +245,8 @@ export default function Courses() {
             <label className="field-group">
               <span className="field-label">Description</span>
               <textarea
-                value={form.description}
-                onChange={handleChange("description")}
+                value={createForm.description}
+                onChange={handleCreateChange("description")}
                 placeholder="Describe what students will learn in this course."
                 className="field-input field-textarea"
                 rows="5"
@@ -222,31 +306,85 @@ export default function Courses() {
                     <div className="eyebrow-text">
                       {isInstructor ? "Selected course" : "Course details"}
                     </div>
-                    <h2 className="section-title">{selectedCourse.title}</h2>
-                    <p className="page-copy">{selectedCourse.description}</p>
+                    {isInstructor ? (
+                      <>
+                        <h2 className="section-title">Edit your course</h2>
+                        <form className="auth-form course-editor-form" onSubmit={handleUpdateCourse}>
+                          <div className="course-form-grid">
+                            <label className="field-group">
+                              <span className="field-label">Title</span>
+                              <input
+                                value={editForm.title}
+                                onChange={handleEditChange("title")}
+                                placeholder="Course title"
+                                className="field-input"
+                              />
+                            </label>
 
-                    <div className="info-grid course-info-grid">
-                      {selectedCourse.category && (
-                        <div className="info-card">
-                          <div className="info-title">Category</div>
-                          <div className="info-copy">{selectedCourse.category}</div>
-                        </div>
-                      )}
+                            <label className="field-group">
+                              <span className="field-label">Category</span>
+                              <input
+                                value={editForm.category}
+                                onChange={handleEditChange("category")}
+                                placeholder="Design, programming, marketing..."
+                                className="field-input"
+                              />
+                            </label>
+                          </div>
 
-                      {!isInstructor && selectedCourse.instructor?.name && (
-                        <div className="info-card">
-                          <div className="info-title">Instructor</div>
-                          <div className="info-copy">{selectedCourse.instructor.name}</div>
-                        </div>
-                      )}
-                    </div>
+                          <label className="field-group">
+                            <span className="field-label">Description</span>
+                            <textarea
+                              value={editForm.description}
+                              onChange={handleEditChange("description")}
+                              placeholder="Describe what students will learn in this course."
+                              className="field-input field-textarea"
+                              rows="6"
+                            />
+                          </label>
 
-                    <div className="course-detail-actions">
-                      {isInstructor ? (
-                        <div className="dashboard-empty">
-                          This section shows only the courses you created.
+                          <div className="course-detail-actions">
+                            <button
+                              type="submit"
+                              className="primary-button"
+                              disabled={updating || deleting}
+                            >
+                              {updating ? "Saving..." : "Save changes"}
+                            </button>
+                            <button
+                              type="button"
+                              className="danger-button"
+                              onClick={handleDeleteCourse}
+                              disabled={updating || deleting}
+                            >
+                              {deleting ? "Deleting..." : "Delete course"}
+                            </button>
+                          </div>
+                        </form>
+                      </>
+                    ) : (
+                      <>
+                        <h2 className="section-title">{selectedCourse.title}</h2>
+                        <p className="page-copy">{selectedCourse.description}</p>
+
+                        <div className="info-grid course-info-grid">
+                          {selectedCourse.category && (
+                            <div className="info-card">
+                              <div className="info-title">Category</div>
+                              <div className="info-copy">{selectedCourse.category}</div>
+                            </div>
+                          )}
+
+                          {selectedCourse.instructor?.name && (
+                            <div className="info-card">
+                              <div className="info-title">Instructor</div>
+                              <div className="info-copy">{selectedCourse.instructor.name}</div>
+                            </div>
+                          )}
                         </div>
-                      ) : isStudent ? (
+
+                        <div className="course-detail-actions">
+                          {isStudent ? (
                         enrolledIds.includes(selectedCourse.id) ? (
                           <Link to="/dashboard" className="secondary-button">
                             Go to dashboard
@@ -266,7 +404,9 @@ export default function Courses() {
                           Login to enroll
                         </Link>
                       )}
-                    </div>
+                        </div>
+                      </>
+                    )}
                   </>
                 ) : (
                   <div className="dashboard-empty">Select a course to view more details.</div>

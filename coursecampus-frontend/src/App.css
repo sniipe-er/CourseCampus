@@ -294,7 +294,8 @@
 }
 
 .primary-button,
-.secondary-button {
+.secondary-button,
+.danger-button {
   border: none;
   cursor: pointer;
   border-radius: 16px;
@@ -316,8 +317,15 @@
   border: 1px solid rgba(26, 35, 126, 0.35);
 }
 
+.danger-button {
+  background: rgba(220, 38, 38, 0.14);
+  color: var(--danger);
+  border: 1px solid rgba(220, 38, 38, 0.32);
+}
+
 .primary-button:hover,
-.secondary-button:hover {
+.secondary-button:hover,
+.danger-button:hover {
   transform: translateY(-2px);
 }
 
@@ -617,6 +625,10 @@
   flex-wrap: wrap;
   gap: 12px;
   margin-top: 22px;
+}
+
+.course-editor-form {
+  margin-top: 12px;
 }
 
 .profile-grid {
