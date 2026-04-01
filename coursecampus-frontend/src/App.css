@@ -329,6 +329,15 @@
   transform: translateY(-2px);
 }
 
+.primary-button:disabled,
+.secondary-button:disabled,
+.danger-button:disabled {
+  opacity: 0.68;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 .stats-grid,
 .feature-grid,
 .info-grid {
@@ -572,6 +581,10 @@
 .course-select-list {
   display: grid;
   gap: 14px;
+}
+
+.course-column-header {
+  margin-bottom: 4px;
 }
 
 .course-select-card {

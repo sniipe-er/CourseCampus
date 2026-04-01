@@ -271,6 +271,15 @@ export default function Courses() {
 
             <div className="course-browser">
               <div className="course-select-list">
+                <div className="course-column-header">
+                  <div className="eyebrow-text">
+                    {isInstructor ? "Your courses" : "Browse courses"}
+                  </div>
+                  <h2 className="section-title">
+                    {isInstructor ? "Select one to manage it" : "Click a course to view its details"}
+                  </h2>
+                </div>
+
                 {courses.map((course) => {
                   const isSelected = course.id === selectedCourseId;
                   const isEnrolled = enrolledIds.includes(course.id);
@@ -308,7 +317,7 @@ export default function Courses() {
                     </div>
                     {isInstructor ? (
                       <>
-                        <h2 className="section-title">Edit your course</h2>
+                        <h2 className="section-title">Manage "{selectedCourse.title}"</h2>
                         <form className="auth-form course-editor-form" onSubmit={handleUpdateCourse}>
                           <div className="course-form-grid">
                             <label className="field-group">
@@ -385,25 +394,27 @@ export default function Courses() {
 
                         <div className="course-detail-actions">
                           {isStudent ? (
-                        enrolledIds.includes(selectedCourse.id) ? (
-                          <Link to="/dashboard" className="secondary-button">
-                            Go to dashboard
-                          </Link>
-                        ) : (
-                          <button
-                            type="button"
-                            className="primary-button"
-                            onClick={() => handleEnroll(selectedCourse.id)}
-                            disabled={enrollingId === selectedCourse.id}
-                          >
-                            {enrollingId === selectedCourse.id ? "Joining..." : "Apply to this course"}
-                          </button>
-                        )
-                      ) : (
-                        <Link to="/login" className="primary-button">
-                          Login to enroll
-                        </Link>
-                      )}
+                            enrolledIds.includes(selectedCourse.id) ? (
+                              <button type="button" className="secondary-button" disabled>
+                                Already enrolled
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                className="primary-button"
+                                onClick={() => handleEnroll(selectedCourse.id)}
+                                disabled={enrollingId === selectedCourse.id}
+                              >
+                                {enrollingId === selectedCourse.id
+                                  ? "Joining..."
+                                  : "Enroll in this course"}
+                              </button>
+                            )
+                          ) : (
+                            <Link to="/login" className="primary-button">
+                              Login to enroll
+                            </Link>
+                          )}
                         </div>
                       </>
                     )}
