@@ -1,156 +1,252 @@
-📘 **CourseCampus – LMS Backend API**
+# CourseCampus
 
-A fully functional **back-end Learning Management System (LMS)** built using **Django**, **Django REST Framework**, and **JWT Authentication**.
+CourseCampus is a learning platform built with Django, Django REST Framework, JWT authentication, and a React frontend.
 
-CourseCampus is an API-only backend that allows **instructors** to create and manage courses and lessons, **students** to enroll and access content, and **admins** to manage the platform through Django Admin.  
-The project focuses on backend architecture, security, role-based permissions, and clean RESTful design.
+The project supports two main roles:
+- Students can browse courses, enroll, view their learning space, and access lessons for courses they joined.
+- Instructors can create, update, and delete their own courses and add lessons and assignments.
 
----
+The repository now contains both:
+- a Django backend API
+- a React frontend in `coursecampus-frontend/`
 
-🚀 **Features**
+## Main features
 
-👤 **User Management**
-- Custom User model
-- JWT authentication (login & refresh)
-- User roles: **Instructor** and **Student**
-- Role-based access control
-- Secure profile access
+### Authentication and users
+- Custom user model with email-based login
+- JWT authentication with SimpleJWT and Djoser
+- Roles: `student` and `instructor`
+- Profile endpoint for the logged-in user
 
-📚 **Courses & Lessons**
-- Instructors create, update, and delete their own courses
-- Lessons added to courses by instructors
+### Courses and lessons
 - Public course listing
-- Students can view lessons only if enrolled
+- Instructor-only course creation and management
+- Instructor-only access to manage their own courses
+- Lesson access for enrolled students and course owners
 
-🎓 **Enrollments**
-- Students enroll in courses
-- Prevents duplicate enrollments
-- Enrollment-based access to lessons
+### Enrollments
+- Students can enroll in available courses
+- Duplicate enrollments are blocked
+- Student dashboard can show enrolled courses and suggestions
 
-🛡 **Permissions & Security**
-- Instructor-only course & lesson management
-- Student-only enrollment
-- JWT-protected endpoints
-- Django Admin for superusers
+### Assignments and certificates
+- Instructors can create assignments for lessons
+- Students can submit assignments
+- Student certificate endpoint is available
 
----
+### Frontend
+- React + Vite single-page application
+- Role-aware courses page
+- Student dashboard and instructor dashboard
+- Login, register, profile, and courses pages
+- Light and dark mode UI
 
-📂 **Project Structure**
+## Tech stack
 
-CourseCampus/
-│
-├── users/ # Custom user model & authentication
-├── courses/ # Courses & lessons logic
-├── enrollments/ # Enrollment system
-├── assignments/ # Assignments (future expansion)
-├── certificates/ # Certificates (future expansion)
-├── CourseCampus/ # Project settings & URLs
-├── db.sqlite3 # SQLite database (development)
-├── manage.py
-└── README.md
-
----
-
-🧩 **Tech Stack**
-
-| Component | Technology |
-|---------|-----------|
+| Area | Technology |
+| --- | --- |
 | Backend | Django 5 |
 | API | Django REST Framework |
-| Authentication | SimpleJWT + Djoser |
-| Database | SQLite (development) |
-| Tools | Postman, Git |
+| Auth | SimpleJWT, Djoser |
+| Frontend | React 19, Vite, React Router |
+| HTTP client | Axios |
+| Database | SQLite for development |
 
----
+## Project structure
 
-🏗 **Setup Instructions**
+```text
+CourseCampus/
+|-- CourseCampus/              Django project settings and URLs
+|-- users/                     Custom user model and auth serializers/views
+|-- courses/                   Courses and lessons
+|-- enrollments/               Enrollment flow
+|-- assignments/               Assignments and submissions
+|-- certificates/              Certificates
+|-- coursecampus-frontend/     React frontend
+|-- manage.py
+|-- requirements.txt
+`-- README.md
+```
 
-### 1️⃣ Clone the repository
+## Local setup
+
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/sniipe-er/CourseCampus.git
 cd CourseCampus
-2️⃣ Create virtual environment & install dependencies
+```
+
+### 2. Create and activate a virtual environment
+
+Windows:
+
+```bash
 python -m venv venv
-source venv/bin/activate   # Linux / macOS
-venv\Scripts\activate      # Windows
+venv\Scripts\activate
+```
 
-pip install django djangorestframework djoser djangorestframework-simplejwt
+Linux or macOS:
 
-3️⃣ Run migrations
+```bash
+python -m venv venv
+source venv/bin/activate
+```
+
+### 3. Install backend dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Run migrations
+
+```bash
 python manage.py makemigrations
 python manage.py migrate
+```
 
-4️⃣ Create superuser (Admin)
+### 5. Create an admin user
+
+```bash
 python manage.py createsuperuser
+```
 
+### 6. Start the Django backend
+
+```bash
+python manage.py runserver
+```
+
+Backend base URL:
+
+```text
+http://127.0.0.1:8000/api/
+```
 
 Admin panel:
 
+```text
 http://127.0.0.1:8000/admin/
+```
 
-5️⃣ Start development server
-python manage.py runserver
+### 7. Start the React frontend
 
+In a new terminal:
 
-API base URL:
+```bash
+cd coursecampus-frontend
+npm install
+```
 
-http://127.0.0.1:8000/api/
+Create a `.env` file in `coursecampus-frontend/` with:
 
+```bash
+VITE_API_URL=http://127.0.0.1:8000/api
+```
 
-🔑 Authentication Endpoints
+Then run:
 
-Method	Endpoint	Description
-POST	/api/auth/users/	Register
-POST	/api/auth/jwt/create/	Login
-POST	/api/auth/jwt/refresh/	Refresh token
-GET	/api/auth/users/me/	Current user
+```bash
+npm run dev
+```
 
-📚 Courses Endpoints
+Frontend dev URL:
 
-Method	Endpoint	Access
-GET	/api/courses/	Public
-GET	/api/courses/me/	Instructor
-POST	/api/courses/me/	Instructor
-GET / PUT / DELETE	/api/courses/<id>/	Instructor (owner)
+```text
+http://127.0.0.1:5173/
+```
 
-📖 Lessons Endpoints
+## Frontend build for Django
 
-Method	Endpoint	Access
-GET	/api/courses/<course_id>/lessons/	Enrolled students / Instructor
-POST	/api/courses/<course_id>/lessons/	Instructor only
+The Django project is already configured to serve the built frontend from `coursecampus-frontend/dist`.
 
-📝 Enrollments Endpoints
+To build the frontend:
 
-Method	Endpoint	Description
-POST	/api/enrollments/enroll/<course_id>/	Enroll in course
-GET	/api/enrollments/my/	My enrollments
+```bash
+cd coursecampus-frontend
+npm run build
+```
 
-🧪 API Testing
+After that, Django can serve:
+- frontend pages at `/`
+- API routes at `/api/...`
 
-Login and get access token
+This is the setup used for single-domain deployment.
 
-Add header to requests:
+## API overview
 
-Authorization: Bearer <ACCESS_TOKEN>
+### Authentication
 
+| Method | Endpoint | Description |
+| --- | --- | --- |
+| POST | `/api/auth/users/` | Register |
+| POST | `/api/auth/jwt/create/` | Login |
+| POST | `/api/auth/jwt/refresh/` | Refresh access token |
+| GET | `/api/auth/users/me/` | Current user |
 
-Test instructor & student permissions using Postman
+### Courses
 
-🎓 Academic Context
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| GET | `/api/courses/` | Public |
+| GET | `/api/courses/me/` | Instructor |
+| POST | `/api/courses/me/` | Instructor |
+| GET | `/api/courses/<id>/` | Instructor owner |
+| PUT | `/api/courses/<id>/` | Instructor owner |
+| DELETE | `/api/courses/<id>/` | Instructor owner |
 
-CourseCampus was developed as a backend-focused academic project to demonstrate:
+### Lessons
 
-REST API design
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| GET | `/api/courses/<course_id>/lessons/` | Enrolled student or instructor |
+| POST | `/api/courses/<course_id>/lessons/` | Instructor |
 
-Authentication & authorization
+### Enrollments
 
-Role-based permissions
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| POST | `/api/enrollments/enroll/<course_id>/` | Student |
+| GET | `/api/enrollments/my/` | Student |
 
-Django best practices
+### Assignments
 
-Clean project structure
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| GET | `/api/assignments/lesson/<lesson_id>/assignments/` | Instructor |
+| POST | `/api/assignments/lesson/<lesson_id>/assignments/` | Instructor |
+| POST | `/api/assignments/submit/<assignment_id>/` | Student |
 
-📍 Repository
+### Certificates
 
+| Method | Endpoint | Access |
+| --- | --- | --- |
+| GET | `/api/certificates/me/` | Student |
+
+## Deployment notes
+
+- The frontend API client reads `VITE_API_URL` first.
+- If `VITE_API_URL` is not set, the frontend falls back to:
+
+```text
+https://sniper.pythonanywhere.com/api
+```
+
+- For local development, set `VITE_API_URL` explicitly so the frontend talks to your local Django server.
+- For single-domain deployment, build the frontend and let Django serve `coursecampus-frontend/dist`.
+
+## Current status
+
+CourseCampus is no longer backend-only. The repository now includes:
+- a working REST API
+- a React frontend
+- instructor course management
+- student enrollment flow
+- dashboard and profile pages
+
+## Repository
+
+```text
 https://github.com/sniipe-er/CourseCampus
+```
